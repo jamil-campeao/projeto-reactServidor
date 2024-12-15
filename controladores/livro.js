@@ -32,10 +32,15 @@ function getLivro(req, res) {
 function postLivro(req, res) {
     try {
         const livroNovo = req.body;
-        insereLivro(livroNovo);
-        res.status(201);
-        res.send('Livro inserido com sucesso');
-        
+        if (!req.body.nome) {
+            res.status(422);
+            res.send("O campo nome é obrigatório!");
+        }
+        else {
+            insereLivro(livroNovo);
+            res.status(201);
+            res.send('Livro inserido com sucesso');
+        }
     } 
     catch (error) {
         res.status(500);
@@ -46,13 +51,13 @@ function postLivro(req, res) {
 function patchLivro(req, res) {
     try {
         const id = req.params.id;
-        if(id && Number(id)) {
-            const body = req.body;
+        const body = req.body;
+        if(id && Number(id) && (req.body.nome)) {
             modificaLivro(body, id);
         }
         else {
             res.status(422);
-            res.send("ID inválido");   
+            res.send("ID ou nome informados corretamente");   
         }
         res.status(200);
         res.send('Dados do livro alterados com sucesso');
