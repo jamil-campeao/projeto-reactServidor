@@ -10,5 +10,13 @@
     {
         "id": "3",
         "nome": "O pequeno principe"
+    },
+    {
+        "id": "4",
+        "nome": "Harry Potter"
+    },
+    {
+        "id": "5",
+        "nome": "Harry Potter e o cálice de fogo"
     }
 ]
