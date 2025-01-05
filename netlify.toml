@@ -6,5 +6,8 @@
   directory = "functions"
   included_files = [
     "controladores/**",
-    "../categorias.json
+    "data/categorias.json",
+    "data/favoritos.json",
+    "data/livros.json",
+
   ]
