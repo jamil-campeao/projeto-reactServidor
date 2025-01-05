@@ -1,6 +1,7 @@
 const express = require('express');
 const serverless = require('serverless-http');
 const { getCategorias } = require('../controladores/categoria');
+const cors = require('cors');
 
 const app = express();
 app.use(express.json());
