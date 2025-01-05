@@ -1,9 +1,13 @@
-const fs = require('fs');
-const path = require('path');
+const { db } = require('../firebaseAdmin');
 
-function getTodasCategorias() {
-    const filePath = path.join(__dirname, '../data/categorias.json');
-    return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+async function getTodasCategorias() {
+    try {
+        const snapshot = await db.collection('categorias').get();
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } catch (error) {
+        console.error('Erro ao buscar categorias:', error.message);
+        throw new Error('Não foi possível buscar as categorias.');
+    }
 }
 
 module.exports = {

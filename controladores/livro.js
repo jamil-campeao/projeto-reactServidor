@@ -1,91 +1,63 @@
-const { getTodosLivros, getLivroPorId, insereLivro, modificaLivro, deletaLivro } = require('../servicos/livro');
+const {
+    getTodosLivros,
+    getLivroPorId,
+    insereLivro,
+    modificaLivro,
+    deletaLivro,
+} = require('../servicos/livro');
 
-function getLivros (req, res) { 
+async function getLivros(req, res) {
     try {
-        const livros = getTodosLivros();
-        res.send(livros);
-    } 
-    catch (error) {
-        res.status(500);
-        res.send(error.message);
+        const livros = await getTodosLivros();
+        res.status(200).json(livros);
+    } catch (error) {
+        console.error('Erro ao buscar livros:', error.message);
+        res.status(500).json({ error: 'Erro ao buscar livros.' });
     }
 }
 
-function getLivro(req, res) { 
+async function getLivro(req, res) {
     try {
-        const id = req.params.id;
-        if(id && Number(id)) {
-            const livro = getLivroPorId(id);
-            res.send(livro);
-        }
-        else {
-            res.status(422);
-            res.send("ID inválido");
-        }
-    } 
-    catch (error) {
-        res.status(500);
-        res.send(error.message);
+        const { id } = req.params;
+        const livro = await getLivroPorId(id);
+        res.status(200).json(livro);
+    } catch (error) {
+        console.error('Erro ao buscar livro:', error.message);
+        res.status(404).json({ error: 'Livro não encontrado.' });
     }
 }
 
-function postLivro(req, res) {
+async function postLivro(req, res) {
     try {
         const livroNovo = req.body;
-        if (!req.body.nome) {
-            res.status(422);
-            res.send("O campo nome é obrigatório!");
-        }
-        else {
-            insereLivro(livroNovo);
-            res.status(201);
-            res.send('Livro inserido com sucesso');
-        }
-    } 
-    catch (error) {
-        res.status(500);
-        res.send(error.message);
+        await insereLivro(livroNovo);
+        res.status(201).json({ message: 'Livro inserido com sucesso!' });
+    } catch (error) {
+        console.error('Erro ao inserir livro:', error.message);
+        res.status(500).json({ error: 'Erro ao inserir livro.' });
     }
 }
 
-function patchLivro(req, res) {
+async function patchLivro(req, res) {
     try {
-        const id = req.params.id;
-        const body = req.body;
-        if(id && Number(id) && (req.body.nome)) {
-            modificaLivro(body, id);
-        }
-        else {
-            res.status(422);
-            res.send("ID ou nome informados corretamente");   
-        }
-        res.status(200);
-        res.send('Dados do livro alterados com sucesso');
-        
-    } 
-    catch (error) {
-        res.status(500);
-        res.send(error.message);
+        const { id } = req.params;
+        const modificacoes = req.body;
+        await modificaLivro(modificacoes, id);
+        res.status(200).json({ message: 'Livro atualizado com sucesso!' });
+    } catch (error) {
+        console.error('Erro ao modificar livro:', error.message);
+        res.status(404).json({ error: 'Livro não encontrado.' });
     }
 }
 
-function deleteLivro(req, res) {
+async function deleteLivro(req, res) {
     try {
-        const id = req.params.id;
-        if(id && Number(id)) {
-            deletaLivro(id);
-        }
-        else {
-            res.status(422);
-            res.send("ID inválido");       
-        }
-        res.status(200);
-        res.send('Livro excluído com sucesso');
-        
-    } 
-    catch (error) {
-        res.status(500);
-        res.send(error.message);
+        const { id } = req.params;
+        await deletaLivro(id);
+        res.status(200).json({ message: 'Livro deletado com sucesso!' });
+    } catch (error) {
+        console.error('Erro ao deletar livro:', error.message);
+        res.status(404).json({ error: 'Livro não encontrado.' });
     }
 }
 
@@ -94,5 +66,5 @@ module.exports = {
     getLivro,
     postLivro,
     patchLivro,
-    deleteLivro
+    deleteLivro,
 };

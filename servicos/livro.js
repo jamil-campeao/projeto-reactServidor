@@ -1,65 +1,79 @@
-const fs = require('fs');
-const path = require('path');
-const filePathLivro = path.join(__dirname, '../data/livros.json');
-
-// Função para ler um arquivo JSON com segurança
-function readJSON(filePath) {
-    try {
-        return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-    } catch (error) {
-        console.error(`Erro ao ler o arquivo ${filePath}:`, error.message);
-        return []; // Retorna uma lista vazia em caso de erro
-    }
-}
-
-// Função para escrever em um arquivo JSON com segurança
-function writeJSON(filePath, data) {
-    try {
-        fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
-    } catch (error) {
-        console.error(`Erro ao escrever no arquivo ${filePath}:`, error.message);
-    }
-}
+const { db } = require('../firebaseAdmin');
 
 // Retorna todos os livros
-function getTodosLivros() {
-    return readJSON(filePathLivro);
+async function getTodosLivros() {
+    try {
+        const snapshot = await db.collection('livros').get();
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } catch (error) {
+        console.error('Erro ao buscar todos os livros:', error.message);
+        throw new Error('Não foi possível buscar os livros.');
+    }
 }
 
 // Retorna um livro pelo ID
-function getLivroPorId(id) {
-    const livros = readJSON(filePathLivro);
-    const livroFiltrado = livros.find(livro => livro.id === id);
-    if (!livroFiltrado) {
-        throw new Error('Nenhum livro encontrado');
+async function getLivroPorId(id) {
+    try {
+        const livroDoc = await db.collection('livros').doc(String(id)).get();
+        if (!livroDoc.exists) {
+            throw new Error('Nenhum livro encontrado.');
+        }
+        return { id: livroDoc.id, ...livroDoc.data() };
+    } catch (error) {
+        console.error(`Erro ao buscar livro com ID ${id}:`, error.message);
+        throw new Error('Não foi possível buscar o livro.');
     }
-    return livroFiltrado;
 }
 
 // Insere um novo livro
-function insereLivro(livroNovo) {
-    const livros = readJSON(filePathLivro);
-    const novaListaLivros = [...livros, livroNovo];
-    writeJSON(filePathLivro, novaListaLivros);
+async function insereLivro(livroNovo) {
+    try {
+        if (!livroNovo.id) {
+            throw new Error('ID do livro é obrigatório para inserir.');
+        }
+        const livroRef = db.collection('livros').doc(String(livroNovo.id)); // Define o ID do documento com o ID do livro
+        await livroRef.set(livroNovo); // Adiciona ou sobrescreve o documento com os dados fornecidos
+        console.log(`Livro com ID ${livroNovo.id} inserido com sucesso.`);
+    } catch (error) {
+        console.error('Erro ao inserir livro:', error.message);
+        throw new Error('Não foi possível inserir o livro.');
+    }
 }
 
 // Modifica um livro existente pelo ID
-function modificaLivro(modificacoes, id) {
-    let livrosAtuais = readJSON(filePathLivro);
-    const indiceModificado = livrosAtuais.findIndex(livro => livro.id === id);
-    if (indiceModificado === -1) {
-        throw new Error("Livro não encontrado");
+async function modificaLivro(modificacoes, id) {
+    try {
+        const livroRef = db.collection('livros').doc(String(id));
+        const livroDoc = await livroRef.get();
+
+        if (!livroDoc.exists) {
+            throw new Error('Livro não encontrado.');
+        }
+
+        await livroRef.update(modificacoes);
+        console.log(`Livro com ID ${id} atualizado com sucesso.`);
+    } catch (error) {
+        console.error(`Erro ao modificar livro com ID ${id}:`, error.message);
+        throw new Error('Não foi possível modificar o livro.');
     }
-    const conteudoMudado = { ...livrosAtuais[indiceModificado], ...modificacoes };
-    livrosAtuais[indiceModificado] = conteudoMudado;
-    writeJSON(filePathLivro, livrosAtuais);
 }
 
 // Deleta um livro pelo ID
-function deletaLivro(id) {
-    const livros = readJSON(filePathLivro);
-    const livrosFiltrados = livros.filter(livro => livro.id !== id);
-    writeJSON(filePathLivro, livrosFiltrados);
+async function deletaLivro(id) {
+    try {
+        const livroRef = db.collection('livros').doc(String(id));
+        const livroDoc = await livroRef.get();
+
+        if (!livroDoc.exists) {
+            throw new Error('Livro não encontrado.');
+        }
+
+        await livroRef.delete();
+        console.log(`Livro com ID ${id} deletado com sucesso.`);
+    } catch (error) {
+        console.error(`Erro ao deletar livro com ID ${id}:`, error.message);
+        throw new Error('Não foi possível deletar o livro.');
+    }
 }
 
 module.exports = {
