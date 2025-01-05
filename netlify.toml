@@ -1,8 +1,7 @@
 [build]
-  command = "node app.js"
-  publish = "/"
+  command = "npm install"
+  publish = "."
 
-[[redirects]]
-  from = "/*"
-  to = "/"
-  status = 200
+[[functions]]
+  directory = "functions"
+  included_files = ["controladores/**"]
