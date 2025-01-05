@@ -10,6 +10,7 @@ const {
 
 const app = express();
 app.use(express.json());
+app.use(cors({ origin: '*' }));
 
 // Prefixo necessário para Netlify Functions
 const router = express.Router();

@@ -4,6 +4,7 @@ const { getCategorias } = require('../controladores/categoria');
 
 const app = express();
 app.use(express.json());
+app.use(cors({ origin: '*' }));
 
 const router = express.Router();
 
