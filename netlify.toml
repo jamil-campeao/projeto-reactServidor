@@ -2,6 +2,8 @@
   command = "npm install"
   publish = "."
 
-[[functions]]
+[functions]
   directory = "functions"
-  included_files = ["controladores/**"]
+  included_files = [
+    "controladores/**"
+  ]
