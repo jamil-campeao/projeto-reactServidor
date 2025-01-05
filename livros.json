@@ -1,1 +1,1 @@
-[{"id":"4","nome":"Entendendo algoritmos"},{"id":"5","nome":"Cangaceiro Javascript"},{"id":"7","nome":"Guia básico de C#"},{"id":"8","nome":"Guia básico de JavaScript"},{"id":"9","nome":"Código Limpo"}]
+[{"id":"4","nome":"Entendendo algoritmos", "autor": "Aditya Y. Bhargava"},{"id":"5","nome":"Cangaceiro Javascript", "autor": "Flávio Almeida"},{"id":"8","nome":"Guia básico de JavaScript", "autor": "David Flanagan"},{"id":"9","nome":"Código Limpo", "autor": "Robert Cecil Martin"}]
