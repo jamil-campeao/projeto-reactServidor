@@ -1,9 +1,11 @@
 const fs = require('fs');
+const path = require('path');
 
 function getTodasCategorias() {
-    return JSON.parse(fs.readFileSync('categorias.json'));
+    const filePath = path.join(__dirname, '../categorias.json');
+    return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
 }
 
-module.exports =  {
+module.exports = {
     getTodasCategorias,
 };
