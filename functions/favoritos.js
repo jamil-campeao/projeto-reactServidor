@@ -9,10 +9,13 @@ const {
 const app = express();
 app.use(express.json());
 
-// Rotas
-app.get('/favoritos', getLivrosFavoritos); // Busca todos os livros favoritos
-app.post('/favoritos/:id', postLivroFavorito); // Adiciona um livro aos favoritos
-app.delete('/favoritos/:id', deleteLivroFavorito); // Remove um livro dos favoritos
+const router = express.Router();
+
+router.get('/', getLivrosFavoritos); // Busca todos os livros favoritos
+router.post('/:id', postLivroFavorito); // Adiciona um livro aos favoritos
+router.delete('/:id', deleteLivroFavorito); // Remove um livro dos favoritos
+
+app.use('/.netlify/functions/favoritos', router);
 
 // Exporta como função serverless
 module.exports.handler = serverless(app);

@@ -11,12 +11,15 @@ const {
 const app = express();
 app.use(express.json());
 
-// Rotas
-app.get('/livros', getLivros); // Busca todos os livros
-app.get('/livros/:id', getLivro); // Busca o livro por ID
-app.post('/livros', postLivro); // Adiciona um novo livro
-app.patch('/livros/:id', patchLivro); // Atualiza parcialmente um livro
-app.delete('/livros/:id', deleteLivro); // Remove um livro
+// Prefixo necessário para Netlify Functions
+const router = express.Router();
 
-// Exporta como função serverless
+router.get('/', getLivros); // Busca todos os livros
+router.get('/:id', getLivro); // Busca livro por ID
+router.post('/', postLivro); // Adiciona livro
+router.patch('/:id', patchLivro); // Atualiza livro por ID
+router.delete('/:id', deleteLivro); // Remove livro por ID
+
+app.use('/.netlify/functions/livros', router);
+
 module.exports.handler = serverless(app);
