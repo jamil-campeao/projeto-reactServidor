@@ -1,11 +1,17 @@
-const fs = require('fs');
-const path = require('path');
+const { getTodasCategorias } = require("../servicos/categoria");
 
-function getTodasCategorias() {
-    const filePath = path.join(__dirname, '../data/categorias.json');
-    return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+
+function getCategorias (req, res) { 
+    try {
+        const categorias = getTodasCategorias();
+        res.send(categorias);
+    } 
+    catch (error) {
+        res.status(500);
+        res.send(error.message);
+    }
 }
 
 module.exports = {
-    getTodasCategorias,
+    getCategorias,
 };
