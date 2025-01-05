@@ -9,5 +9,6 @@
     "data/categorias.json",
     "data/favoritos.json",
     "data/livros.json",
+    "servicos/**"
 
   ]
